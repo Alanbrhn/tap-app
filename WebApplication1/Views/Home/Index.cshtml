@@ -1,8 +1,41 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model WebApplication1.Models.PopulationData
+
+@{
+    ViewData["Title"] = "Population Chart";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<h2>Grafik Populasi Indonesia</h2>
+
+<canvas id="populationChart" width="400" height="200"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        var ctx = document.getElementById('populationChart').getContext('2d');
+
+       
+        var years = @Html.Raw(Json.Serialize(Model.Tahun.Select(t => t.Label).ToList()));
+        var populationData = @Html.Raw(Json.Serialize(Model.DataContent.Values.ToList()));
+
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: years,
+                datasets: [{
+                    label: 'Populasi (Juta)',
+                    data: populationData,
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
